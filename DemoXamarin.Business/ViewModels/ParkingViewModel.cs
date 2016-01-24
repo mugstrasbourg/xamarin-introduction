@@ -16,6 +16,7 @@ namespace DemoXamarin.Business.ViewModels
     {
         private ObservableCollection<GeolocalizableModel> _parkings;
         private IParkingService _parkingService;
+        private IGpsProvider _gpsProvider;
 
         public ObservableCollection<GeolocalizableModel> Parkings
         {
@@ -34,21 +35,42 @@ namespace DemoXamarin.Business.ViewModels
             }
         }
 
-        public ParkingViewModel(IParkingService parkingService)
+        public ParkingViewModel(IParkingService parkingService,
+            IGpsProvider gpsProvider)
         {
             this._parkingService = parkingService;
+            this._gpsProvider = gpsProvider;
         }
 
         public async Task ReloadDataAsync()
         {
-            foreach (Parking parking in (await this._parkingService.RetrieveParkings()).OrderBy(x => x.Name))
+            GeoCoordinate coordinates = null;
+            List<GeolocalizableModel> result = new List<GeolocalizableModel>();
+            await this._gpsProvider.RefreshPositionAsync();
+
+            if(this._gpsProvider.GeolocationAvailable)
             {
-                this.Parkings.Add(new GeolocalizableModel()
+                coordinates = this._gpsProvider.GetCurrentPosition;
+            }
+
+            foreach (Parking parking in await this._parkingService.RetrieveParkings())
+            {
+                result.Add(new GeolocalizableModel()
                 {
                     Name = parking.Name,
                     Latitude = parking.Latitude,
-                    Longitude = parking.Longitude
+                    Longitude = parking.Longitude,
+                    Distance = coordinates != null ? Distance(coordinates.Latitude, coordinates.Longitude, parking.Latitude, parking.Longitude) : 0d
                 });
+            }
+
+            if(coordinates == null)
+            {
+                this.Parkings = new ObservableCollection<GeolocalizableModel>(result.OrderBy(x => x.Name));
+            }
+            else
+            {
+                this.Parkings = new ObservableCollection<GeolocalizableModel>(result.OrderBy(x => x.Distance));
             }
         }
 
