@@ -26,6 +26,8 @@ namespace DemoXamarin.Droid
 		
 		public static void UpdateIdValues()
 		{
+			global::GalaSoft.MvvmLight.Resource.String.ApplicationName = global::DemoXamarin.Droid.Resource.String.ApplicationName;
+			global::GalaSoft.MvvmLight.Resource.String.Hello = global::DemoXamarin.Droid.Resource.String.Hello;
 		}
 		
 		public partial class Attribute
