@@ -11,11 +11,15 @@ using Android.Views;
 using Android.Widget;
 using DemoXamarin.Business.ViewModels;
 using GalaSoft.MvvmLight.Threading;
+using GalaSoft.MvvmLight.Ioc;
+using DemoXamarin.Business;
 
 namespace DemoXamarin.Droid
 {
     public static class App
     {
+        public static Context Context { get; set; }
+
         private static ViewModelLocatorBase _locator;
         public static ViewModelLocatorBase Locator
         {
@@ -23,7 +27,7 @@ namespace DemoXamarin.Droid
             {
                 if(_locator == null)
                 {
-                    //DispatcherHelper.Initialize();
+                    SimpleIoc.Default.Register<IGpsProvider, GpsProvider>();
 
                     _locator = new ViewModelLocatorBase();
                 }

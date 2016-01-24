@@ -22,6 +22,8 @@ namespace DemoXamarin.Droid
         {
             base.OnCreate(bundle);
 
+            App.Context = this;
+
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
