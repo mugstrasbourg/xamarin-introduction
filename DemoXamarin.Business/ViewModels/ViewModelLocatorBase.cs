@@ -1,4 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
+using Microsoft.Practices.ServiceLocation;
+using Smartbourg.DataAccessLayer.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +12,6 @@ namespace DemoXamarin.Business.ViewModels
 {
     public class ViewModelLocatorBase
     {
-        protected bool IsInDesign => ViewModelBase.IsInDesignModeStatic && !UseDesignTimeData;
-
         private bool UseDesignTimeData
         {
             get
@@ -18,10 +19,26 @@ namespace DemoXamarin.Business.ViewModels
                 return false;
             }
         }
+        protected bool IsInDesign => ViewModelBase.IsInDesignModeStatic && !UseDesignTimeData;
+
+        public ParkingViewModel ParkingViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ParkingViewModel>();
+            }
+        }
 
         public ViewModelLocatorBase()
         {
-            // Declare dependancies
+            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+
+            if(!IsInDesign)
+            {
+                SimpleIoc.Default.Register<IParkingService, ParkingService>();
+            }
+
+            SimpleIoc.Default.Register<ParkingViewModel>();
         }
     }
 }

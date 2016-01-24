@@ -1,5 +1,6 @@
 ﻿using DemoXamarin.Business.Models;
 using GalaSoft.MvvmLight;
+using Smartbourg.DataAccessLayer.Models.Parkings;
 using Smartbourg.DataAccessLayer.Services;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace DemoXamarin.Business.ViewModels
 {
@@ -39,7 +41,15 @@ namespace DemoXamarin.Business.ViewModels
 
         public async Task ReloadDataAsync()
         {
-            throw new NotImplementedException();
+            foreach (Parking parking in (await this._parkingService.RetrieveParkings()).OrderBy(x => x.Name))
+            {
+                this.Parkings.Add(new GeolocalizableModel()
+                {
+                    Name = parking.Name,
+                    Latitude = parking.Latitude,
+                    Longitude = parking.Longitude
+                });
+            }
         }
     }
 }

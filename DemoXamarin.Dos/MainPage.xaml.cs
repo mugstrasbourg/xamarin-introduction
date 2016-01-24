@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DemoXamarin.Business.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace DemoXamarin.Dos
         public MainPage()
         {
             this.InitializeComponent();
+            (this.DataContext as ParkingViewModel).ReloadDataAsync();
         }
     }
 }
