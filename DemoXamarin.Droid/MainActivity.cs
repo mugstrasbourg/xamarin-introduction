@@ -5,26 +5,39 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using DemoXamarin.Business.ViewModels;
+using Microsoft.Practices.ServiceLocation;
+using GalaSoft.MvvmLight.Helpers;
+using DemoXamarin.Business.Models;
 
 namespace DemoXamarin.Droid
 {
     [Activity(Label = "DemoXamarin.Droid", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity
     {
-        int count = 1;
+        protected ParkingViewModel Vm => App.Locator.ParkingViewModel;
+        protected ListView ParkingListView => FindViewById<ListView>(Resource.Id.parkingListView);
 
-        protected override void OnCreate(Bundle bundle)
+        protected override async void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            // Get our button from the layout resource,
-            // and attach an event to it
-            Button button = FindViewById<Button>(Resource.Id.MyButton);
+            await this.Vm.ReloadDataAsync();
 
-            button.Click += delegate { button.Text = string.Format("{0} clicks!", count++); };
+            this.ParkingListView.Adapter = this.Vm.Parkings.GetAdapter(GetParkingView);
+        }
+
+        private View GetParkingView(int index, GeolocalizableModel model, View convertView)
+        {
+            View view = convertView ?? LayoutInflater.Inflate(Resource.Layout.RowItemTemplate, null);
+
+            TextView textView = view.FindViewById<TextView>(Resource.Id.parkingName);
+            textView.Text = model.Name;
+
+            return view;
         }
     }
 }

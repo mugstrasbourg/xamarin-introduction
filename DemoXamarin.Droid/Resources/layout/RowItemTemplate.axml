@@ -5,10 +5,10 @@
     android:layout_height="fill_parent"
     android:minWidth="25px"
     android:minHeight="25px">
-    <ListView
-        android:minWidth="25px"
-        android:minHeight="25px"
+    <TextView
+        android:text="Text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/parkingListView" />
+        android:layout_height="wrap_content"
+        android:id="@+id/parkingName"
+        android:textColor="#FF00FF" />
 </LinearLayout>
